@@ -326,11 +326,12 @@ TEST(GTestJsArrayBuffer, TestToString) {
     String::CPtr s1 = a1->toString();
     String::CPtr e1 = String::create(c1);
     ASSERT_EQ(s1->compareTo(e1), 0);
+    ASSERT_TRUE(s1->isAscii());
 
     const char c2[] = {
         0x61, 0x62, 0x63,   // abc
         0xe3, 0x81, 0x84, 0xe3, 0x82, 0x8d, 0xe3, 0x81, 0xaf,   // いろは
-        0x31, 0x32, 0x33,   // 123
+        0x31, 0x32, 0x33, 0x34, // 1234
         0
     };
     JsArrayBuffer::Ptr a2 = JsArrayBuffer::create(strlen(c2));
@@ -339,6 +340,7 @@ TEST(GTestJsArrayBuffer, TestToString) {
     String::CPtr s2 = a2->toString();
     String::CPtr e2 = String::create(c2, String::UTF8);
     ASSERT_EQ(s2->compareTo(e2), 0);
+    ASSERT_FALSE(s2->isAscii());
 }
 
 }   // namespace libj
