@@ -77,7 +77,8 @@ class JsArrayBufferImpl : public JsArrayBuffer {
     }
 
     Boolean isAscii() const {
-        for (Size i = 0; i < length_; i++) {
+        Size len64 = (length_ + 7) / 8;
+        for (Size i = 0; i < len64; i++) {
             if (buf64_[i] & 0x8080808080808080) return false;
         }
         return true;
@@ -258,9 +259,11 @@ class JsArrayBufferImpl : public JsArrayBuffer {
     JsArrayBufferImpl(Size length = 0)
         : length_(length)
         , buf64_(0) {
-        Size len64 = length / 8;
-        if (length % 8) len64++;
-        if (len64) buf64_ = new ULong[len64];
+        Size len64 = (length + 7) / 8;
+        if (len64) {
+            buf64_ = new ULong[len64];
+            buf64_[len64 - 1] = 0;
+        }
     }
 
  public:
