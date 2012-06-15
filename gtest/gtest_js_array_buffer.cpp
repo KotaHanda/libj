@@ -1,3 +1,5 @@
+// Copyright (c) 2012 Plenluno All rights reserved.
+
 #include <gtest/gtest.h>
 #include <libj/js_array_buffer.h>
 #include <libj/error.h>
@@ -28,7 +30,7 @@ TEST(GTestJsArrayBuffer, TestInt8) {
     }
     for (int i = 0; i < a->length(); i++) {
         Byte v;
-        a->getInt8(i, v);
+        a->getInt8(i, &v);
         ASSERT_EQ(v, -5 * i);
     }
 }
@@ -41,7 +43,7 @@ TEST(GTestJsArrayBuffer, TestUInt8) {
     }
     for (int i = 0; i < a->length(); i++) {
         UByte v;
-        a->getUInt8(i, v);
+        a->getUInt8(i, &v);
         ASSERT_EQ(v, 10 * i);
     }
 }
@@ -54,7 +56,7 @@ TEST(GTestJsArrayBuffer, TestAlignedInt16) {
     }
     for (int i = 0; i + 1 < a->length(); i += 2) {
         Short v;
-        a->getInt16(i, v, true);
+        a->getInt16(i, &v, true);
         ASSERT_EQ(v, -300 * i);
     }
     for (int i = 0; i + 1 < a->length(); i += 2) {
@@ -63,7 +65,7 @@ TEST(GTestJsArrayBuffer, TestAlignedInt16) {
     }
     for (int i = 0; i + 1 < a->length(); i += 2) {
         Short v;
-        a->getInt16(i, v, false);
+        a->getInt16(i, &v, false);
         ASSERT_EQ(v, -400 * i);
     }
 }
@@ -76,7 +78,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedInt16) {
     }
     for (int i = 1; i + 1 < a->length(); i += 2) {
         Short v;
-        a->getInt16(i, v, true);
+        a->getInt16(i, &v, true);
         ASSERT_EQ(v, -300 * i);
     }
     for (int i = 1; i + 1 < a->length(); i += 2) {
@@ -85,7 +87,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedInt16) {
     }
     for (int i = 1; i + 1 < a->length(); i += 2) {
         Short v;
-        a->getInt16(i, v, false);
+        a->getInt16(i, &v, false);
         ASSERT_EQ(v, -400 * i);
     }
 }
@@ -98,7 +100,7 @@ TEST(GTestJsArrayBuffer, TestAlignedUInt16) {
     }
     for (int i = 0; i < a->length(); i += 2) {
         UShort v;
-        a->getUInt16(i, v, true);
+        a->getUInt16(i, &v, true);
         ASSERT_EQ(v, 300 * i);
     }
     for (int i = 0; i < a->length(); i += 2) {
@@ -107,7 +109,7 @@ TEST(GTestJsArrayBuffer, TestAlignedUInt16) {
     }
     for (int i = 0; i < a->length(); i += 2) {
         UShort v;
-        a->getUInt16(i, v, false);
+        a->getUInt16(i, &v, false);
         ASSERT_EQ(v, 400 * i);
     }
 }
@@ -120,7 +122,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedUInt16) {
     }
     for (int i = 1; i + 1 < a->length(); i += 2) {
         UShort v;
-        a->getUInt16(i, v, true);
+        a->getUInt16(i, &v, true);
         ASSERT_EQ(v, 300 * i);
     }
     for (int i = 1; i + 1 < a->length(); i += 2) {
@@ -129,7 +131,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedUInt16) {
     }
     for (int i = 1; i + 1 < a->length(); i += 2) {
         UShort v;
-        a->getUInt16(i, v, false);
+        a->getUInt16(i, &v, false);
         ASSERT_EQ(v, 400 * i);
     }
 }
@@ -142,7 +144,7 @@ TEST(GTestJsArrayBuffer, TestAlignedInt32) {
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
         Int v;
-        a->getInt32(i, v, true);
+        a->getInt32(i, &v, true);
         ASSERT_EQ(v, -70000 * i);
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
@@ -151,7 +153,7 @@ TEST(GTestJsArrayBuffer, TestAlignedInt32) {
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
         Int v;
-        a->getInt32(i, v, false);
+        a->getInt32(i, &v, false);
         ASSERT_EQ(v, -80000 * i);
     }
 }
@@ -165,7 +167,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedInt32) {
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
             Int v;
-            a->getInt32(i, v, true);
+            a->getInt32(i, &v, true);
             ASSERT_EQ(v, -70000 * i);
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
@@ -174,7 +176,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedInt32) {
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
             Int v;
-            a->getInt32(i, v, false);
+            a->getInt32(i, &v, false);
             ASSERT_EQ(v, -80000 * i);
         }
     }
@@ -188,7 +190,7 @@ TEST(GTestJsArrayBuffer, TestAlignedUInt32) {
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
         UInt v;
-        a->getUInt32(i, v, true);
+        a->getUInt32(i, &v, true);
         ASSERT_EQ(v, 70000 * i);
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
@@ -197,7 +199,7 @@ TEST(GTestJsArrayBuffer, TestAlignedUInt32) {
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
         UInt v;
-        a->getUInt32(i, v, false);
+        a->getUInt32(i, &v, false);
         ASSERT_EQ(v, 80000 * i);
     }
 }
@@ -211,7 +213,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedUInt32) {
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
             UInt v;
-            a->getUInt32(i, v, true);
+            a->getUInt32(i, &v, true);
             ASSERT_EQ(v, 70000 * i);
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
@@ -220,7 +222,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedUInt32) {
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
             UInt v;
-            a->getUInt32(i, v, false);
+            a->getUInt32(i, &v, false);
             ASSERT_EQ(v, 80000 * i);
         }
     }
@@ -234,7 +236,7 @@ TEST(GTestJsArrayBuffer, TestAlignedFloat32) {
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
         Float v;
-        a->getFloat32(i, v, true);
+        a->getFloat32(i, &v, true);
         ASSERT_EQ(v, 1.23f * i);
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
@@ -243,7 +245,7 @@ TEST(GTestJsArrayBuffer, TestAlignedFloat32) {
     }
     for (int i = 0; i + 3 < a->length(); i += 4) {
         Float v;
-        a->getFloat32(i, v, false);
+        a->getFloat32(i, &v, false);
         ASSERT_EQ(v, -45.6f * i);
     }
 }
@@ -257,7 +259,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedFloat32) {
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
             Float v;
-            a->getFloat32(i, v, true);
+            a->getFloat32(i, &v, true);
             ASSERT_EQ(v, 12.3f * i);
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
@@ -266,7 +268,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedFloat32) {
         }
         for (int i = ofs; i + 3 < a->length(); i += 4) {
             Float v;
-            a->getFloat32(i, v, false);
+            a->getFloat32(i, &v, false);
             ASSERT_EQ(v, -4.56f * i);
         }
     }
@@ -280,7 +282,7 @@ TEST(GTestJsArrayBuffer, TestAlignedFloat64) {
     }
     for (int i = 0; i + 7 < a->length(); i += 8) {
         Double v;
-        a->getFloat64(i, v, true);
+        a->getFloat64(i, &v, true);
         ASSERT_EQ(v, 1.23 * i);
     }
     for (int i = 0; i + 7 < a->length(); i += 8) {
@@ -289,7 +291,7 @@ TEST(GTestJsArrayBuffer, TestAlignedFloat64) {
     }
     for (int i = 0; i + 7 < a->length(); i += 8) {
         Double v;
-        a->getFloat64(i, v, false);
+        a->getFloat64(i, &v, false);
         ASSERT_EQ(v, -45.6 * i);
     }
 }
@@ -303,7 +305,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedFloat64) {
         }
         for (int i = ofs; i + 7 < a->length(); i += 8) {
             Double v;
-            a->getFloat64(i, v, true);
+            a->getFloat64(i, &v, true);
             ASSERT_EQ(v, 12.3 * i);
         }
         for (int i = ofs; i + 7 < a->length(); i += 8) {
@@ -312,7 +314,7 @@ TEST(GTestJsArrayBuffer, TestNonAlignedFloat64) {
         }
         for (int i = ofs; i + 7 < a->length(); i += 8) {
             Double v;
-            a->getFloat64(i, v, false);
+            a->getFloat64(i, &v, false);
             ASSERT_EQ(v, -4.56 * i);
         }
     }
@@ -329,9 +331,9 @@ TEST(GTestJsArrayBuffer, TestToString) {
     ASSERT_TRUE(s1->isAscii());
 
     const char c2[] = {
-        0x61, 0x62, 0x63,   // abc
+        0x61, 0x62, 0x63,                                       // abc
         0xe3, 0x81, 0x84, 0xe3, 0x82, 0x8d, 0xe3, 0x81, 0xaf,   // いろは
-        0x31, 0x32, 0x33, 0x34, // 1234
+        0x31, 0x32, 0x33, 0x34,                                 // 1234
         0
     };
     JsArrayBuffer::Ptr a2 = JsArrayBuffer::create(strlen(c2));

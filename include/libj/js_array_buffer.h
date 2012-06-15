@@ -17,21 +17,21 @@ class JsArrayBuffer : LIBJ_MUTABLE(JsArrayBuffer)
     virtual Ptr slice(Size begin, Size end) const = 0;
 
     virtual Boolean getInt8(
-        Size byteOffset, Byte& value) const = 0;
+        Size byteOffset, Byte* value) const = 0;
     virtual Boolean getUInt8(
-        Size byteOffset, UByte& value) const = 0;
+        Size byteOffset, UByte* value) const = 0;
     virtual Boolean getInt16(
-        Size byteOffset, Short& value, Boolean littleEndian = false) const = 0;
+        Size byteOffset, Short* value, Boolean littleEndian = false) const = 0;
     virtual Boolean getUInt16(
-        Size byteOffset, UShort& value, Boolean littleEndian = false) const = 0;
+        Size byteOffset, UShort* value, Boolean littleEndian = false) const = 0;
     virtual Boolean getInt32(
-        Size byteOffset, Int& value, Boolean littleEndian = false) const = 0;
+        Size byteOffset, Int* value, Boolean littleEndian = false) const = 0;
     virtual Boolean getUInt32(
-        Size byteOffset, UInt& value, Boolean littleEndian = false) const = 0;
+        Size byteOffset, UInt* value, Boolean littleEndian = false) const = 0;
     virtual Boolean getFloat32(
-        Size byteOffset, Float& value, Boolean littleEndian = false) const = 0;
+        Size byteOffset, Float* value, Boolean littleEndian = false) const = 0;
     virtual Boolean getFloat64(
-        Size byteOffset, Double& value, Boolean littleEndian = false) const = 0;
+        Size byteOffset, Double* value, Boolean littleEndian = false) const = 0;
 
     virtual Boolean setInt8(
         Size byteOffset, Byte value) = 0;

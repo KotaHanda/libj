@@ -8,15 +8,14 @@ namespace libj {
 
 class JsArrayBufferImpl : public JsArrayBuffer {
  private:
-    static const UInt cpu_endian;
-
-    static Boolean isLittleEndian() {
-        return *(reinterpret_cast<const UByte*>(&cpu_endian));
-    }
+    static const union endian_u {
+        UShort one;
+        UByte isLittle;
+    } endian;
 
     template <typename T>
     T load(Size byteOffset, Boolean littleEndian) const {
-        Boolean swap = isLittleEndian() != littleEndian;
+        Boolean swap = endian.isLittle != littleEndian;
         if (swap) {
             union {
                 T w;
@@ -36,7 +35,7 @@ class JsArrayBufferImpl : public JsArrayBuffer {
             if (mod) {
                 T d1 = buf[idx + 1];
                 Size sh = mod * 8;
-                if (isLittleEndian()) {
+                if (endian.isLittle) {
                     d0 = d0 >> sh;
                     d1 = d1 << (8 * sizeof(T) - sh);
                 } else {
@@ -51,7 +50,7 @@ class JsArrayBufferImpl : public JsArrayBuffer {
 
     template <typename T>
     void store(Size byteOffset, T value, Boolean littleEndian) {
-        Boolean swap = isLittleEndian() != littleEndian;
+        Boolean swap = endian.isLittle != littleEndian;
         if (swap || byteOffset % sizeof(T)) {
             union {
                 T w;
@@ -109,75 +108,81 @@ class JsArrayBufferImpl : public JsArrayBuffer {
         return p;
     }
 
-    Boolean getInt8(Size byteOffset, Byte& value) const {
+    Boolean getInt8(Size byteOffset, Byte* value) const {
         UByte v;
-        Boolean ret = getUInt8(byteOffset, v);
-        value = v;
+        Boolean ret = getUInt8(byteOffset, &v);
+        *value = v;
         return ret;
     }
 
-    Boolean getUInt8(Size byteOffset, UByte& value) const {
-        if (byteOffset >= length_)
+    Boolean getUInt8(Size byteOffset, UByte* value) const {
+        if (byteOffset >= length_) {
             return false;
-        else {
+        } else {
             const UByte* buf8 = reinterpret_cast<const UByte*>(buf64_);
-            value = buf8[byteOffset];
+            *value = buf8[byteOffset];
             return true;
         }
     }
 
-    Boolean getInt16(Size byteOffset, Short& value, Boolean littleEndian = false) const {
+    Boolean getInt16(
+        Size byteOffset, Short* value, Boolean littleEndian = false) const {
         UShort v;
-        Boolean ret = getUInt16(byteOffset, v, littleEndian);
-        value = v;
+        Boolean ret = getUInt16(byteOffset, &v, littleEndian);
+        *value = v;
         return ret;
     }
 
-    Boolean getUInt16(Size byteOffset, UShort& value, Boolean littleEndian = false) const {
-        if (byteOffset + 1 >= length_)
+    Boolean getUInt16(
+        Size byteOffset, UShort* value, Boolean littleEndian = false) const {
+        if (byteOffset + 1 >= length_) {
             return false;
-        else {
-            value = load<UShort>(byteOffset, littleEndian);
+        } else {
+            *value = load<UShort>(byteOffset, littleEndian);
             return true;
         }
     }
 
-    Boolean getInt32(Size byteOffset, Int& value, Boolean littleEndian = false) const {
+    Boolean getInt32(
+        Size byteOffset, Int* value, Boolean littleEndian = false) const {
         UInt v;
-        Boolean ret = getUInt32(byteOffset, v, littleEndian);
-        value = v;
+        Boolean ret = getUInt32(byteOffset, &v, littleEndian);
+        *value = v;
         return ret;
     }
 
-    Boolean getUInt32(Size byteOffset, UInt& value, Boolean littleEndian = false) const {
-        if (byteOffset + 3 >= length_)
+    Boolean getUInt32(
+        Size byteOffset, UInt* value, Boolean littleEndian = false) const {
+        if (byteOffset + 3 >= length_) {
             return false;
-        else {
-            value = load<UInt>(byteOffset, littleEndian);
+         } else {
+            *value = load<UInt>(byteOffset, littleEndian);
             return true;
         }
     }
 
-    Boolean getFloat32(Size byteOffset, Float& value, Boolean littleEndian = false) const {
+    Boolean getFloat32(
+        Size byteOffset, Float* value, Boolean littleEndian = false) const {
         union {
             Float f;
             UInt i;
         } v;
-        Boolean ret =  getUInt32(byteOffset, v.i, littleEndian);
-        value = v.f;
+        Boolean ret =  getUInt32(byteOffset, &v.i, littleEndian);
+        *value = v.f;
         return ret;
     }
 
-    Boolean getFloat64(Size byteOffset, Double& value, Boolean littleEndian = false) const {
-        if (byteOffset + 7 >= length_)
+    Boolean getFloat64(
+        Size byteOffset, Double* value, Boolean littleEndian = false) const {
+        if (byteOffset + 7 >= length_) {
             return false;
-        else {
+        } else {
             union {
                 ULong i;
                 Double f;
             } v;
             v.i = load<ULong>(byteOffset, littleEndian);
-            value = v.f;
+            *value = v.f;
             return true;
         }
     }
@@ -187,42 +192,47 @@ class JsArrayBufferImpl : public JsArrayBuffer {
     }
 
     Boolean setUInt8(Size byteOffset, UByte value) {
-        if (byteOffset >= length_)
+        if (byteOffset >= length_) {
             return false;
-        else {
+        } else {
             UByte* buf8 = reinterpret_cast<UByte*>(buf64_);
             buf8[byteOffset] = value;
             return true;
         }
     }
 
-    Boolean setInt16(Size byteOffset, Short value, Boolean littleEndian = false) {
+    Boolean setInt16(
+        Size byteOffset, Short value, Boolean littleEndian = false) {
         return setUInt16(byteOffset, value, littleEndian);
     }
 
-    Boolean setUInt16(Size byteOffset, UShort value, Boolean littleEndian = false) {
-        if (byteOffset + 1 >= length_)
+    Boolean setUInt16(
+        Size byteOffset, UShort value, Boolean littleEndian = false) {
+        if (byteOffset + 1 >= length_) {
             return false;
-        else {
+        } else {
             store<UShort>(byteOffset, value, littleEndian);
             return true;
         }
     }
 
-    Boolean setInt32(Size byteOffset, Int value, Boolean littleEndian = false) {
+    Boolean setInt32(
+        Size byteOffset, Int value, Boolean littleEndian = false) {
         return setUInt32(byteOffset, value, littleEndian);
     }
 
-    Boolean setUInt32(Size byteOffset, UInt value, Boolean littleEndian = false) {
-        if (byteOffset + 3 >= length_)
+    Boolean setUInt32(
+        Size byteOffset, UInt value, Boolean littleEndian = false) {
+        if (byteOffset + 3 >= length_) {
             return false;
-        else {
+        } else {
             store<UInt>(byteOffset, value, littleEndian);
             return true;
         }
     }
 
-    Boolean setFloat32(Size byteOffset, Float value, Boolean littleEndian = false) {
+    Boolean setFloat32(
+        Size byteOffset, Float value, Boolean littleEndian = false) {
         union {
             Float f;
             UInt i;
@@ -231,10 +241,11 @@ class JsArrayBufferImpl : public JsArrayBuffer {
         return setUInt32(byteOffset, v.i, littleEndian);
     }
 
-    Boolean setFloat64(Size byteOffset, Double value, Boolean littleEndian = false) {
-        if (byteOffset + 7 >= length_)
+    Boolean setFloat64(
+        Size byteOffset, Double value, Boolean littleEndian = false) {
+        if (byteOffset + 7 >= length_) {
             return false;
-        else {
+        } else {
             union {
                 Double f;
                 ULong i;
@@ -276,7 +287,7 @@ class JsArrayBufferImpl : public JsArrayBuffer {
         return p;
     }
 };  // JsArrayBufferImpl
-const UInt JsArrayBufferImpl::cpu_endian = 1;
+const union JsArrayBufferImpl::endian_u JsArrayBufferImpl::endian = {1};
 
 JsArrayBuffer::Ptr JsArrayBuffer::create(Size length) {
     return JsArrayBufferImpl::create(length);
